@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 project(aapt-9png)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 
-include_directories(src)
+find_package(PNG REQUIRED)
+include_directories(${PNG_INCLUDE_DIRS} src)
 
 set(LIB_SRC
     src/9png.cpp
@@ -13,7 +14,7 @@ set(LIB_SRC
 set(CLI_SRC
     src/cli.cpp)
 
-add_library(aapt9png STATIC ${LIB_SRC})
+add_library(aapt9png SHARED ${LIB_SRC})
 
 add_executable(aapt-9png ${CLI_SRC})
 target_link_libraries(aapt-9png aapt9png)

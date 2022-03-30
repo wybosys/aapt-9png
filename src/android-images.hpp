@@ -1,0 +1,4 @@
+#ifndef __ANDROID_IMAGES_H_INCLUDED
+#define __ANDROID_IMAGES_H_INCLUDED
+
+#endif

@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.8)
+project(aapt-9png)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+
+include_directories(src)
+
+set(LIB_SRC
+    src/9png.cpp
+    src/android-images.cpp)
+
+set(CLI_SRC
+    src/cli.cpp)
+
+add_library(aapt9png STATIC ${LIB_SRC})
+
+add_executable(aapt-9png ${CLI_SRC})
+target_link_libraries(aapt-9png aapt9png)

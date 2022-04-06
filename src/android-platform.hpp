@@ -13,6 +13,7 @@ typedef enum
 {
     NO_ERROR = 0,
     UNKNOWN_ERROR = -1,
+
 } status_t;
 
 struct Res_png_9patch

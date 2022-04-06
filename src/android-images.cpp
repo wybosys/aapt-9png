@@ -1157,9 +1157,8 @@ void analyze_image(const char *imageName, image_info &imageInfo, int grayscaleTo
 
 void write_png(const char *imageName,
                png_structp write_ptr, png_infop write_info,
-               image_info &imageInfo, int grayscaleTolerance)
+               image_info &imageInfo, int grayscaleTolerance, const Bundle *bundle)
 {
-    bool optimize = true;
     png_uint_32 width, height;
     int color_type;
     int bit_depth, interlace_type, compression_type;
@@ -1342,4 +1341,45 @@ void write_png(const char *imageName,
     NOISY(printf("Image written: w=%d, h=%d, d=%d, colors=%d, inter=%d, comp=%d\n",
                  (int)width, (int)height, bit_depth, color_type, interlace_type,
                  compression_type));
+}
+
+bool read_png_protected(png_structp read_ptr, String8 &printableName, png_infop read_info,
+                        String8 const &file, FILE *fp, image_info *imageInfo)
+{
+    if (setjmp(png_jmpbuf(read_ptr)))
+    {
+        return false;
+    }
+
+    png_init_io(read_ptr, fp);
+
+    read_png(printableName.c_str(), read_ptr, read_info, imageInfo);
+
+    const size_t nameLen = file.length();
+    if (nameLen > 6)
+    {
+        const char *name = file.c_str();
+        if (name[nameLen - 5] == '9' && name[nameLen - 6] == '.')
+        {
+            if (do_9patch(printableName.c_str(), imageInfo) != NO_ERROR)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool write_png_protected(png_structp write_ptr, String8 &printableName, png_infop write_info,
+                         image_info *imageInfo, Bundle const *bundle)
+{
+    if (setjmp(png_jmpbuf(write_ptr)))
+    {
+        return false;
+    }
+
+    write_png(printableName.c_str(), write_ptr, write_info, *imageInfo, bundle);
+
+    return true;
 }

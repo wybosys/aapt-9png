@@ -2,9 +2,13 @@
 #define __ANDROID_IMAGES_H_INCLUDED
 
 #include "android-platform.hpp"
+#include <string>
 
 #define PNG_INTERNAL
 #include <png.h>
+
+typedef ::std::string String8;
+class Bundle;
 
 // This holds an image as 8bpp RGBA.
 struct image_info
@@ -108,6 +112,12 @@ extern void analyze_image(const char *imageName, image_info &imageInfo, int gray
 
 extern void write_png(const char *imageName,
                       png_structp write_ptr, png_infop write_info,
-                      image_info &imageInfo, int grayscaleTolerance);
+                      image_info &imageInfo, int grayscaleTolerance, const Bundle *bundle);
+
+bool read_png_protected(png_structp read_ptr, String8 &printableName, png_infop read_info,
+                        String8 const &file, FILE *fp, image_info *imageInfo);
+
+bool write_png_protected(png_structp write_ptr, String8 &printableName, png_infop write_info,
+                         image_info *imageInfo, Bundle const *bundle);
 
 #endif

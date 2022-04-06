@@ -1232,13 +1232,13 @@ void write_png(const char *imageName,
     bool hasTransparency;
     int paletteEntries;
 
-    int grayscaleTolerance = bundle->grayscaleTolerance;
+    int grayscaleTolerance = bundle ? bundle->grayscaleTolerance : 0;
     analyze_image(imageName, imageInfo, grayscaleTolerance, rgbPalette, alphaPalette,
                   &paletteEntries, &hasTransparency, &color_type, outRows);
 
     // If the image is a 9-patch, we need to preserve it as a ARGB file to make
     // sure the pixels will not be pre-dithered/clamped until we decide they are
-    if (bundle->minSdk >= SDK_JELLY_BEAN_MR1)
+    if (bundle && bundle->minSdk >= SDK_JELLY_BEAN_MR1)
     {
         if (imageInfo.is9Patch && PNG_COLOR_TYPE_PALETTE == color_type)
         {
@@ -1464,7 +1464,7 @@ bool read_png_protected(png_structp read_ptr, String8 const &printableName, png_
     return true;
 }
 
-bool write_png_protected(png_structp write_ptr, String8 &printableName, png_infop write_info,
+bool write_png_protected(png_structp write_ptr, String8 const &printableName, png_infop write_info,
                          image_info *imageInfo, Bundle const *bundle)
 {
     if (setjmp(png_jmpbuf(write_ptr)))

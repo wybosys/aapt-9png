@@ -1,11 +1,11 @@
 #include "android-images.hpp"
-#include <memory>
+#include <stdio.h>
+#include <string.h>
+#include <memory.h>
+#include <stdlib.h>
 #include <assert.h>
-#include <algorithm>
 #include <zlib.h>
-#include <cstring>
-
-using ::std::max;
+#include <algorithm>
 
 #define NOISY(x) // x
 #define COLOR_TRANSPARENT 0
@@ -14,6 +14,8 @@ using ::std::max;
 #define COLOR_LAYOUT_BOUNDS_TICK 0xFF0000FF
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define ABS(a) ((a) < 0 ? -(a) : (a))
+
+using ::std::max;
 
 enum
 {
@@ -30,67 +32,24 @@ enum
     TICK_TYPE_BOTH
 };
 
-// This holds an image as 8bpp RGBA.
-struct image_info
+image_info::~image_info()
 {
-    image_info() : rows(NULL), is9Patch(false),
-                   xDivs(NULL), yDivs(NULL), colors(NULL), allocRows(NULL) {}
-
-    ~image_info()
+    if (rows && rows != allocRows)
     {
-        if (rows && rows != allocRows)
-        {
-            free(rows);
-        }
-        if (allocRows)
-        {
-            for (int i = 0; i < (int)allocHeight; i++)
-            {
-                free(allocRows[i]);
-            }
-            free(allocRows);
-        }
-        free(xDivs);
-        free(yDivs);
-        free(colors);
+        free(rows);
     }
-
-    void *serialize9patch()
+    if (allocRows)
     {
-        void *serialized = Res_png_9patch::serialize(info9Patch, xDivs, yDivs, colors);
-        reinterpret_cast<Res_png_9patch *>(serialized)->deviceToFile();
-        return serialized;
+        for (int i = 0; i < (int)allocHeight; i++)
+        {
+            free(allocRows[i]);
+        }
+        free(allocRows);
     }
-
-    png_uint_32 width;
-    png_uint_32 height;
-    png_bytepp rows;
-
-    // 9-patch info.
-    bool is9Patch;
-    Res_png_9patch info9Patch;
-    int32_t *xDivs;
-    int32_t *yDivs;
-    uint32_t *colors;
-
-    // Layout padding, if relevant
-    bool haveLayoutBounds;
-    int32_t layoutBoundsLeft;
-    int32_t layoutBoundsTop;
-    int32_t layoutBoundsRight;
-    int32_t layoutBoundsBottom;
-
-    // Round rect outline description
-    int32_t outlineInsetsLeft;
-    int32_t outlineInsetsTop;
-    int32_t outlineInsetsRight;
-    int32_t outlineInsetsBottom;
-    float outlineRadius;
-    uint8_t outlineAlpha;
-
-    png_uint_32 allocHeight;
-    png_bytepp allocRows;
-};
+    free(xDivs);
+    free(yDivs);
+    free(colors);
+}
 
 static void log_warning(png_structp png_ptr, png_const_charp warning_message)
 {

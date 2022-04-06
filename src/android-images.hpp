@@ -6,7 +6,50 @@
 #define PNG_INTERNAL
 #include <png.h>
 
-struct image_info;
+// This holds an image as 8bpp RGBA.
+struct image_info
+{
+    image_info() : rows(NULL), is9Patch(false),
+                   xDivs(NULL), yDivs(NULL), colors(NULL), allocRows(NULL) {}
+
+    ~image_info();
+
+    void *serialize9patch()
+    {
+        void *serialized = Res_png_9patch::serialize(info9Patch, xDivs, yDivs, colors);
+        reinterpret_cast<Res_png_9patch *>(serialized)->deviceToFile();
+        return serialized;
+    }
+
+    png_uint_32 width;
+    png_uint_32 height;
+    png_bytepp rows;
+
+    // 9-patch info.
+    bool is9Patch;
+    Res_png_9patch info9Patch;
+    int32_t *xDivs;
+    int32_t *yDivs;
+    uint32_t *colors;
+
+    // Layout padding, if relevant
+    bool haveLayoutBounds;
+    int32_t layoutBoundsLeft;
+    int32_t layoutBoundsTop;
+    int32_t layoutBoundsRight;
+    int32_t layoutBoundsBottom;
+
+    // Round rect outline description
+    int32_t outlineInsetsLeft;
+    int32_t outlineInsetsTop;
+    int32_t outlineInsetsRight;
+    int32_t outlineInsetsBottom;
+    float outlineRadius;
+    uint8_t outlineAlpha;
+
+    png_uint_32 allocHeight;
+    png_bytepp allocRows;
+};
 
 extern void read_png(const char *imageName,
                      png_structp read_ptr, png_infop read_info,

@@ -1472,7 +1472,11 @@ bool write_png_protected(png_structp write_ptr, String8 const &printableName, pn
         return false;
     }
 
+    FILE *fp = fopen(printableName.c_str(), "wb");
+    png_init_io(write_ptr, fp);
+
     write_png(printableName.c_str(), write_ptr, write_info, *imageInfo, bundle);
 
+    fclose(fp);
     return true;
 }

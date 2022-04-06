@@ -4,7 +4,7 @@
 #include "android-platform.hpp"
 #include <string>
 
-#define PNG_INTERNAL
+//#define PNG_INTERNAL
 #include <png.h>
 
 typedef ::std::string String8;

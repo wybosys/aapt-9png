@@ -26,7 +26,8 @@ bool DecodeAapt9PNG(::std::string const &input, ::std::string const &outjson, ::
     // 输出普通png
     auto write_file = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, nullptr, nullptr);
     auto write_info = png_create_info_struct(write_file);
-    info.is9Patch = false;  
+
+    info.is9Patch = false;
     write_png_protected(write_file, outpng, write_info, &info, nullptr);
 
     png_destroy_read_struct(&read_file, &read_info, nullptr);

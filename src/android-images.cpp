@@ -1418,9 +1418,14 @@ static int read_9patched_chunks(png_structp read_ptr, png_unknown_chunkp chunk)
         patch->fileToDevice();
         memcpy(&image->info9Patch, patch, sizeof(Res_png_9patch));
 
-        image->xDivs = patch->getXDivs();
-        image->yDivs = patch->getYDivs();
-        image->colors = patch->getColors();
+        image->xDivs = (int32_t *)malloc(patch->numXDivs * sizeof(int32_t));
+        memcpy(image->xDivs, patch->getXDivs(), patch->numXDivs * sizeof(int32_t));
+
+        image->yDivs = (int32_t *)malloc(patch->numYDivs * sizeof(int32_t));
+        memcpy(image->yDivs, patch->getYDivs(), patch->numYDivs * sizeof(int32_t));
+
+        image->colors = (uint32_t *)malloc(patch->numColors * sizeof(uint32_t));
+        memcpy(image->colors, patch->getColors(), patch->numColors * sizeof(uint32_t));
 
         return 1;
     }

@@ -1,5 +1,7 @@
 #include "9png.hpp"
 #include "android-images.hpp"
+#include <json/json.h>
+#include <fstream>
 
 bool DecodeAapt9PNG(::std::string const &input, ::std::string const &outjson, ::std::string const &outpng)
 {
@@ -23,6 +25,12 @@ bool DecodeAapt9PNG(::std::string const &input, ::std::string const &outjson, ::
         fclose(fp);
         return false;
     }
+
+    // 输出.9信息
+    Json::Value root;
+    ::std::ofstream stm(outjson);
+    stm << root.toStyledString();
+    stm.close();
 
     png_destroy_read_struct(&read_file, &read_info, nullptr);
     fclose(fp);

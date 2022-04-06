@@ -1399,6 +1399,34 @@ void write_png(const char *imageName,
     }
 }
 
+static int read_9patched_chunks(png_structp read_ptr, png_unknown_chunkp chunk)
+{
+    image_info *image = (image_info *)png_get_user_chunk_ptr(read_ptr);
+    if (strcmp((char const *)chunk->name, "npOl") == 0)
+    {
+        memcpy(&image->outlineInsetsLeft, chunk->data, 4 * sizeof(png_uint_32));
+        image->outlineRadius = ((float *)chunk->data)[4];
+        image->outlineAlpha = ((png_uint_32 *)chunk->data)[5];
+        return 1;
+    }
+    else if (strcmp((char const *)chunk->name, "npTc") == 0)
+    {
+        image->is9Patch = true;
+        image->haveLayoutBounds = false;
+
+        auto patch = Res_png_9patch::deserialize((void *)chunk->data);
+        patch->fileToDevice();
+        memcpy(&image->info9Patch, patch, sizeof(Res_png_9patch));
+
+        image->xDivs = patch->getXDivs();
+        image->yDivs = patch->getYDivs();
+        image->colors = patch->getColors();
+
+        return 1;
+    }
+    return 0;
+}
+
 bool read_png_protected(png_structp read_ptr, String8 const &printableName, png_infop read_info,
                         String8 const &file, FILE *fp, image_info *imageInfo)
 {
@@ -1409,20 +1437,24 @@ bool read_png_protected(png_structp read_ptr, String8 const &printableName, png_
 
     png_init_io(read_ptr, fp);
 
-    read_png(printableName.c_str(), read_ptr, read_info, imageInfo);
-
     const size_t nameLen = file.length();
     if (nameLen > 6)
     {
         const char *name = file.c_str();
         if (name[nameLen - 5] == '9' && name[nameLen - 6] == '.')
         {
-            if (do_9patch(printableName.c_str(), imageInfo) != NO_ERROR)
+            /* if (do_9patch(printableName.c_str(), imageInfo) != NO_ERROR)
             {
                 return false;
             }
+            */
+
+            // 从png文件中读取处理过的.9信息
+            png_set_read_user_chunk_fn(read_ptr, imageInfo, read_9patched_chunks);
         }
     }
+
+    read_png(printableName.c_str(), read_ptr, read_info, imageInfo);
 
     return true;
 }

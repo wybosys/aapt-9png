@@ -59,7 +59,15 @@ extern void read_png(const char *imageName,
                      png_structp read_ptr, png_infop read_info,
                      image_info *outImageInfo);
 
+/**
+ * @brief 原始.9.png
+ */
 extern status_t do_9patch(const char *imageName, image_info *image);
+
+/**
+ * @brief aapt处理过的.9.png
+ */
+extern status_t do_aapt9patch(char const *imageName, image_info *image);
 
 extern status_t get_horizontal_ticks(
     png_bytep row, int width, bool transparent, bool required,

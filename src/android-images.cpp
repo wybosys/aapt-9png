@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <algorithm>
 #include <zlib.h>
+#include <cstring>
 
 using ::std::max;
 

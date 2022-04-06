@@ -6,16 +6,7 @@
 bool DecodeAapt9PNG(::std::string const &input, ::std::string const &outjson, ::std::string const &outpng)
 {
     auto read_file = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, nullptr, nullptr);
-    if (!read_file)
-    {
-        return false;
-    }
-
     auto read_info = png_create_info_struct(read_file);
-    if (!read_info)
-    {
-        return false;
-    }
 
     image_info info;
     auto fp = fopen(input.c_str(), "rb");
@@ -31,6 +22,11 @@ bool DecodeAapt9PNG(::std::string const &input, ::std::string const &outjson, ::
     ::std::ofstream stm(outjson);
     stm << root.toStyledString();
     stm.close();
+
+    // 输出普通png
+    auto write_file = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, nullptr, nullptr);
+    info.is9Patch = false;
+    // write_png_protected(write_file, outpng, )
 
     png_destroy_read_struct(&read_file, &read_info, nullptr);
     fclose(fp);

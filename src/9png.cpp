@@ -15,10 +15,21 @@ bool DecodeAapt9PNG(::std::string const &input, ::std::string const &outjson, ::
         return false;
     }
 
+    image_info info;
+    auto fp = fopen(input.c_str(), "rb");
+    if (!read_png_protected(read_file, input, read_info, input, fp, &info))
+    {
+        png_destroy_read_struct(&read_file, &read_info, nullptr);
+        fclose(fp);
+        return false;
+    }
+
+    png_destroy_read_struct(&read_file, &read_info, nullptr);
+    fclose(fp);
     return false;
 }
 
-bool EncodeAapt9PNG(::std::string const &output, ::std::string const &injson, ::std::string const &inpng)
+bool EncodeAapt9PNG(::std::string const &output, ::std::string const &injson, ::std::string const &inpng, Bundle const *bundle)
 {
     return false;
 }

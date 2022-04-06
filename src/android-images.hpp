@@ -112,12 +112,12 @@ extern void analyze_image(const char *imageName, image_info &imageInfo, int gray
 
 extern void write_png(const char *imageName,
                       png_structp write_ptr, png_infop write_info,
-                      image_info &imageInfo, int grayscaleTolerance, const Bundle *bundle);
+                      image_info &imageInfo, const Bundle *bundle);
 
-bool read_png_protected(png_structp read_ptr, String8 &printableName, png_infop read_info,
+bool read_png_protected(png_structp read_ptr, String8 const &printableName, png_infop read_info,
                         String8 const &file, FILE *fp, image_info *imageInfo);
 
-bool write_png_protected(png_structp write_ptr, String8 &printableName, png_infop write_info,
+bool write_png_protected(png_structp write_ptr, String8 const &printableName, png_infop write_info,
                          image_info *imageInfo, Bundle const *bundle);
 
 #endif

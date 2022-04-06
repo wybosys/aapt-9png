@@ -1,3 +1,4 @@
+#include "core.hpp"
 #include "android-platform.hpp"
 #include <arpa/inet.h>
 #include <cstdio>

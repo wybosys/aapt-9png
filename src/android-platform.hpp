@@ -85,4 +85,9 @@ struct Res_png_9patch
     }
 };
 
+typedef enum
+{
+    SDK_JELLY_BEAN_MR1 = 17
+} ANDROID_VERSION;
+
 #endif

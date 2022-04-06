@@ -5,6 +5,7 @@ class Bundle
 {
 public:
     int minSdk;
-}
+    int grayscaleTolerance;
+};
 
 #endif
